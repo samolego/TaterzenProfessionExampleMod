@@ -5,6 +5,7 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -24,6 +25,8 @@ import static com.example.profession_example_mod.ProfessionExampleMod.MOD_ID;
 public class MerchantProfession implements TaterzenProfession {
     public static final Identifier PROFESSION_ID = new Identifier(MOD_ID, "merchant");
     private TaterzenNPC npc;
+    private String ouchMessage = "Ouch!";
+    private int throwCount = 1;
 
     @Override
     public ActionResult interactAt(PlayerEntity player, Vec3d pos, Hand hand) {
@@ -38,21 +41,19 @@ public class MerchantProfession implements TaterzenProfession {
                 default:
                 case COMMON:
                     paymentStack = new ItemStack(Items.OAK_LOG);
-                    paymentStack.setCount(1);
                     break;
                 case UNCOMMON:
                     paymentStack = new ItemStack(Items.IRON_INGOT);
-                    paymentStack.setCount(1);
                     break;
                 case RARE:
                     paymentStack = new ItemStack(Items.GOLD_INGOT);
-                    paymentStack.setCount(1);
                     break;
                 case EPIC:
                     paymentStack = new ItemStack(Items.DIAMOND);
-                    paymentStack.setCount(1);
                     break;
             }
+            paymentStack.setCount(this.throwCount);
+
             // Decrease player's stack count
             stack.setCount(stack.getCount() - 1);
 
@@ -69,7 +70,7 @@ public class MerchantProfession implements TaterzenProfession {
 
     @Override
     public boolean handleAttack(Entity attacker) {
-        attacker.sendSystemMessage(new LiteralText("Ouch!"), this.npc.getUuid());
+        attacker.sendSystemMessage(new LiteralText(this.ouchMessage), this.npc.getUuid());
         if(attacker instanceof PlayerEntity)
             ((PlayerEntity) attacker).inventory.clear(); // Haha, there we go, they shouldn't have messed with us!
 
@@ -85,5 +86,28 @@ public class MerchantProfession implements TaterzenProfession {
         profession.npc.setCanPickUpLoot(true);
 
         return profession;
+    }
+
+    public void setPunchMessage(String ouchMessage) {
+        this.ouchMessage = ouchMessage;
+    }
+
+    public void setThrowCount(int throwCount) {
+        this.throwCount = throwCount;
+    }
+
+
+    @Override
+    public void fromTag(CompoundTag tag) {
+        // Reading saved profession data
+        this.ouchMessage = tag.getString("OuchMessage");
+        this.throwCount = tag.getInt("ThrowCount");
+    }
+
+    @Override
+    public void toTag(CompoundTag tag) {
+        // Saving profession data
+        tag.putString("OuchMessage", this.ouchMessage);
+        tag.putInt("ThrowCount", this.throwCount);
     }
 }
