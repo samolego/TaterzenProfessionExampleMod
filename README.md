@@ -1,4 +1,4 @@
-# Fabric Example Mod
+# Taterzen Profession Example Mod
 
 ## Setup
 

@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "modid",
+  "id": "profession_example_mod",
   "version": "${version}",
 
-  "name": "Example Mod",
+  "name": "Profession Example Mod",
   "description": "This is an example description! Tell everyone what your mod is about!",
   "authors": [
     "Me!"
@@ -19,19 +19,17 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.fabricmc.example.ExampleMod"
+      "com.example.profession_example_mod.ProfessionExampleMod"
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+    "profession_example_mod.mixins.json"
   ],
 
   "depends": {
     "fabricloader": ">=0.7.4",
     "fabric": "*",
+    "taterzens": ">=${taterzens}",
     "minecraft": "1.16.x"
-  },
-  "suggests": {
-    "another-mod": "*"
   }
 }
