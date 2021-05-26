@@ -9,12 +9,12 @@
     "Me!"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://samolego.github.io/Taterzens",
+    "sources": "https://github.com/samolego/Taterzens"
   },
 
   "license": "CC0-1.0",
-  "icon": "assets/modid/icon.png",
+  "icon": "assets/profession_example_mod/icon.png",
 
   "environment": "*",
   "entrypoints": {
