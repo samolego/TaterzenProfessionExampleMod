@@ -1,10 +1,10 @@
 plugins {
-	id 'fabric-loom' version '0.6-SNAPSHOT'
+	id 'fabric-loom' version '0.9-SNAPSHOT'
 	id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
@@ -23,6 +23,10 @@ repositories {
 		name 'LuckPerms'
 		url 'https://oss.sonatype.org/content/repositories/snapshots'
 	}
+	maven {
+		name = "TomTheGeek-repo"
+		url = "https://maven.tomthegeek.ml/releases/"
+	}
 }
 
 dependencies {
@@ -40,7 +44,6 @@ dependencies {
 
 
 	// Faster startup
-	modRuntime "com.github.CaffeineMC:hydrogen-fabric:mc1.16.5-v0.2.0"
 	modRuntime "com.github.astei:lazydfu:0.1.2"
 }
 
@@ -50,7 +53,6 @@ processResources {
 
 	filesMatching("fabric.mod.json") {
 		expand("version": project.version, "taterzens": project.taterzens_version)
-		//expand("taterzens": project.taterzens_version)
 	}
 }
 
@@ -61,14 +63,10 @@ tasks.withType(JavaCompile).configureEach {
 	// If Javadoc is generated, this must be specified in that task too.
 	it.options.encoding = "UTF-8"
 
-	// The Minecraft launcher currently installs Java 8 for users, so your mod probably wants to target Java 8 too
-	// JDK 9 introduced a new way of specifying this that will make sure no newer classes or methods are used.
-	// We'll use that if it's available, but otherwise we'll use the older option.
-	def targetVersion = 8
-	if (JavaVersion.current().isJava9Compatible()) {
-		 it.options.release = targetVersion
-	}
+	// Minecraft 1.17 (21w19a) upwards uses Java 16.
+	it.options.release = 16
 }
+
 
 java {
 	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task

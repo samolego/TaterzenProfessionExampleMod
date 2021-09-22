@@ -10,12 +10,10 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import org.samo_lego.taterzens.api.TaterzensAPI;
-import org.samo_lego.taterzens.interfaces.TaterzenEditor;
-import org.samo_lego.taterzens.npc.TaterzenNPC;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
+import static org.samo_lego.taterzens.commands.NpcCommand.selectedTaterzenExecutor;
 
 /**
  * The /merchant command
@@ -45,43 +43,35 @@ public class MerchantCommand {
 
     private static int editPaymentCount(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
         ServerCommandSource source = ctx.getSource();
-        TaterzenNPC taterzen = ((TaterzenEditor)source.getPlayer()).getNpc();
-        if (taterzen != null) {
-            int throwCount = IntegerArgumentType.getInteger(ctx, "throw count");
+        int throwCount = IntegerArgumentType.getInteger(ctx, "throw count");
 
+        return selectedTaterzenExecutor(source.getPlayer(), taterzen -> {
             // Get the profession instance
             MerchantProfession profession = (MerchantProfession) taterzen.getProfession(MerchantProfession.PROFESSION_ID);
+
             if(profession != null) {
                 profession.setThrowCount(throwCount);
                 source.sendFeedback(HOORAY_MSG, false);
             } else {
                 source.sendError(PROFESSION_NOT_SET);
             }
-        } else {
-            // Error for no selected Taterzen is already available
-            source.sendError(TaterzensAPI.noSelectedTaterzenError());
-        }
-        return 0;
+        });
     }
 
     private static int editPunchMessage(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
         ServerCommandSource source = ctx.getSource();
-        TaterzenNPC taterzen = ((TaterzenEditor)source.getPlayer()).getNpc();
-        if (taterzen != null) {
-            String ouchMessage = MessageArgumentType.getMessage(ctx, "new ouch message").getString();
+        String ouchMessage = MessageArgumentType.getMessage(ctx, "new ouch message").getString();
 
+        return selectedTaterzenExecutor(source.getPlayer(), taterzenNPC -> {
             // Get the profession instance
-            MerchantProfession profession = (MerchantProfession) taterzen.getProfession(MerchantProfession.PROFESSION_ID);
+            MerchantProfession profession = (MerchantProfession) taterzenNPC.getProfession(MerchantProfession.PROFESSION_ID);
+
             if(profession != null) {
                 profession.setPunchMessage(ouchMessage);
                 source.sendFeedback(HOORAY_MSG, false);
             } else {
                 source.sendError(PROFESSION_NOT_SET);
             }
-        } else {
-            // Error for no selected Taterzen is already available
-            source.sendError(TaterzensAPI.noSelectedTaterzenError());
-        }
-        return 0;
+        });
     }
 }

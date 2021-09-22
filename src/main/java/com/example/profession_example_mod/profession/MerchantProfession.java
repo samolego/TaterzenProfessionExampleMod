@@ -5,7 +5,7 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -36,22 +36,12 @@ public class MerchantProfession implements TaterzenProfession {
         ItemStack stack =player.getStackInHand(hand);
         if(!stack.isEmpty()) {
             Rarity rarity = stack.getItem().getRarity(stack);
-            ItemStack paymentStack;
-            switch(rarity) {
-                default:
-                case COMMON:
-                    paymentStack = new ItemStack(Items.OAK_LOG);
-                    break;
-                case UNCOMMON:
-                    paymentStack = new ItemStack(Items.IRON_INGOT);
-                    break;
-                case RARE:
-                    paymentStack = new ItemStack(Items.GOLD_INGOT);
-                    break;
-                case EPIC:
-                    paymentStack = new ItemStack(Items.DIAMOND);
-                    break;
-            }
+            ItemStack paymentStack = switch (rarity) {
+                case COMMON -> new ItemStack(Items.OAK_LOG);
+                case UNCOMMON -> new ItemStack(Items.IRON_INGOT);
+                case RARE -> new ItemStack(Items.GOLD_INGOT);
+                case EPIC -> new ItemStack(Items.DIAMOND);
+            };
             paymentStack.setCount(this.throwCount);
 
             // Decrease player's stack count
@@ -72,7 +62,7 @@ public class MerchantProfession implements TaterzenProfession {
     public boolean handleAttack(Entity attacker) {
         attacker.sendSystemMessage(new LiteralText(this.ouchMessage), this.npc.getUuid());
         if(attacker instanceof PlayerEntity)
-            ((PlayerEntity) attacker).inventory.clear(); // Haha, there we go, they shouldn't have messed with us!
+            ((PlayerEntity) attacker).getInventory().clear(); // Haha, there we go, they shouldn't have messed with us!
 
         return false; // false as "don't cancel the attack"
     }
@@ -98,16 +88,18 @@ public class MerchantProfession implements TaterzenProfession {
 
 
     @Override
-    public void fromTag(CompoundTag tag) {
+    public void readNbt(NbtCompound tag) {
         // Reading saved profession data
         this.ouchMessage = tag.getString("OuchMessage");
         this.throwCount = tag.getInt("ThrowCount");
+
     }
 
     @Override
-    public void toTag(CompoundTag tag) {
+    public void saveNbt(NbtCompound tag) {
         // Saving profession data
         tag.putString("OuchMessage", this.ouchMessage);
         tag.putInt("ThrowCount", this.throwCount);
+
     }
 }
