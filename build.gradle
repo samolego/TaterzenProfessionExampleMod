@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.9-SNAPSHOT'
+	id 'fabric-loom' version '0.10-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -27,6 +27,14 @@ repositories {
 		name = "TomTheGeek-repo"
 		url = "https://maven.tomthegeek.ml/releases/"
 	}
+	maven {
+		name = "CarpetMod maven"
+		url 'https://masa.dy.fi/maven'
+	}
+	maven {
+		name = "Nucleoid maven"
+		url = "https://maven.nucleoid.xyz/"
+	}
 }
 
 dependencies {
@@ -41,10 +49,6 @@ dependencies {
 	// Taterzens
 	// We need this for profession API
 	modImplementation "com.github.samolego.Taterzens:taterzens-fabric:${project.taterzens_version}"
-
-
-	// Faster startup
-	modRuntime "com.github.astei:lazydfu:0.1.2"
 }
 
 processResources {
